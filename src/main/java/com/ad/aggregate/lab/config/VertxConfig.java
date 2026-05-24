@@ -20,10 +20,9 @@ public class VertxConfig {
 
     @Bean
     public KafkaConsumerVerticle kafkaConsumerVerticle(
-            Map<String, String> kafkaConsumerConfig,
-            KafkaProperties kafkaProperties
+            Map<String, String> kafkaConsumerConfig
     ) {
-        return new KafkaConsumerVerticle(kafkaConsumerConfig, kafkaProperties.topics());
+        return new KafkaConsumerVerticle(kafkaConsumerConfig);
     }
 
     @Bean

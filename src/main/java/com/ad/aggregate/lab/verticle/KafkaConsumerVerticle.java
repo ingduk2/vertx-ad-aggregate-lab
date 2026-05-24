@@ -1,13 +1,12 @@
 package com.ad.aggregate.lab.verticle;
 
+import com.ad.aggregate.lab.common.AdTopic;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.kafka.client.consumer.KafkaConsumer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -15,14 +14,13 @@ import java.util.Map;
 public class KafkaConsumerVerticle extends AbstractVerticle {
 
     private final Map<String, String> kafkaConfig;
-    private final List<String> topics;
     private KafkaConsumer<String, String> consumer;
 
     @Override
     public void start(Promise<Void> startPromise) throws Exception {
         consumer = KafkaConsumer.create(vertx, kafkaConfig);
 
-        consumer.subscribe(new HashSet<>(topics))
+        consumer.subscribe(AdTopic.toSet())
                 .onSuccess(v -> {
                     log.info("Kafka Consumer Started");
                     startPromise.complete();
@@ -31,6 +29,7 @@ public class KafkaConsumerVerticle extends AbstractVerticle {
 
         consumer.handler(record -> {
             log.info("topic: {}, key: {}, value: {}", record.topic(), record.key(), record.value());
+            vertx.eventBus().publish(record.topic(), record.value());
         });
     }
 

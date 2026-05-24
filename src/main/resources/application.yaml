@@ -20,7 +20,3 @@ kafka:
   key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
   value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
   auto-offset-reset: earliest
-  topics:
-    - ad.request
-    - ad.impression
-    - ad.click
