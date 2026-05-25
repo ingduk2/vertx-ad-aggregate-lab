@@ -1,7 +1,13 @@
 package com.ad.aggregate.lab.config;
 
+import com.ad.aggregate.lab.aggregate.AggregateService;
+import com.ad.aggregate.lab.common.FlushPayload;
+import com.ad.aggregate.lab.common.FlushPayloadCodec;
 import com.ad.aggregate.lab.verticle.AggregationVerticle;
+import com.ad.aggregate.lab.verticle.BulkUpsertWorkerVerticle;
 import com.ad.aggregate.lab.verticle.KafkaConsumerVerticle;
+import io.vertx.core.DeploymentOptions;
+import io.vertx.core.ThreadingModel;
 import io.vertx.core.Vertx;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
@@ -36,12 +42,20 @@ public class VertxConfig {
     }
 
     @Bean
+    public BulkUpsertWorkerVerticle bulkUpsertWorkerVerticle(AggregateService aggregateService) {
+        return new BulkUpsertWorkerVerticle(aggregateService);
+    }
+
+    @Bean
     public ApplicationRunner deployVerticles(
             Vertx vertx,
             KafkaConsumerVerticle kafkaConsumerVerticle,
-            AggregationVerticle aggregationVerticle
+            AggregationVerticle aggregationVerticle,
+            BulkUpsertWorkerVerticle bulkUpsertWorkerVerticle
     ) {
         return args -> {
+            vertx.eventBus().registerDefaultCodec(FlushPayload.class, new FlushPayloadCodec());
+
             vertx.deployVerticle(kafkaConsumerVerticle)
                     .onSuccess(id -> log.info("KafkaConsumerVerticle deployed. ID: {}", id))
                     .onFailure(err -> log.error("KafkaConsumerVerticle deployment failed.", err));
@@ -49,6 +63,11 @@ public class VertxConfig {
             vertx.deployVerticle(aggregationVerticle)
                     .onSuccess(id -> log.info("AggregationVerticle deployed. ID: {}", id))
                     .onFailure(err -> log.error("AggregationVerticle deployment failed.", err));
+
+            vertx.deployVerticle(bulkUpsertWorkerVerticle,
+                            new DeploymentOptions().setThreadingModel(ThreadingModel.WORKER))
+                    .onSuccess(id -> log.info("BulkUpsertWorkerVerticle deployed. ID: {}", id))
+                    .onFailure(err -> log.error("BulkUpsertWorkerVerticle deployment failed.", err));
         };
     }
 }

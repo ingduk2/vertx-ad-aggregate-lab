@@ -64,8 +64,11 @@ public class AggregationVerticle extends AbstractVerticle {
     private void flush(FlushReason reason) {
         if (buffer.isEmpty()) return;
         log.info("flush Start - reason: {}, buffer size: {}", reason, buffer.size());
-        // TODO: Chapter 4 BulkUpsertWorkerVerticle 로 전달
+
+        Map<String, AggregateCounter> snapshot = new HashMap<>(buffer);
         buffer.clear();
+
+        vertx.eventBus().send(EventBusAddress.AGGREGATE_FLUSH.address(), new FlushPayload(snapshot));
     }
 
     private String buildKey(AdEventBase base) {
