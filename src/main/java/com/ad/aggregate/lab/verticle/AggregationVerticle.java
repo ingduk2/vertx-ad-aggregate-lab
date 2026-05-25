@@ -1,6 +1,7 @@
 package com.ad.aggregate.lab.verticle;
 
 import com.ad.aggregate.lab.common.*;
+import com.ad.aggregate.lab.config.AggregateProperties;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.function.ObjLongConsumer;
 public class AggregationVerticle extends AbstractVerticle {
 
     private final ObjectMapper objectMapper;
+    private final AggregateProperties aggregateProperties;
     private final Map<String, AggregateCounter> buffer = new HashMap<>();
 
     @Override
@@ -35,6 +37,11 @@ public class AggregationVerticle extends AbstractVerticle {
                 message -> handle(message.body(), ClickEvent.class, AggregateCounter::addClick)
         );
 
+        vertx.setPeriodic(
+                aggregateProperties.flushIntervalSeconds() * 1000L,
+                id -> flush(FlushReason.PERIODIC)
+        );
+
         startPromise.complete();
     }
 
@@ -47,6 +54,18 @@ public class AggregationVerticle extends AbstractVerticle {
         long count = event.base().count();
         action.accept(aggregateCounter, count);
         log.info("aggregate - key: {}, buffer: {}", key, buffer.get(key));
+
+        // 건수 초과 flush
+        if (buffer.size() >= aggregateProperties.flushBufferSize()) {
+            flush(FlushReason.BUFFER_SIZE);
+        }
+    }
+
+    private void flush(FlushReason reason) {
+        if (buffer.isEmpty()) return;
+        log.info("flush Start - reason: {}, buffer size: {}", reason, buffer.size());
+        // TODO: Chapter 4 BulkUpsertWorkerVerticle 로 전달
+        buffer.clear();
     }
 
     private String buildKey(AdEventBase base) {

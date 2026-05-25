@@ -28,8 +28,11 @@ public class VertxConfig {
     }
 
     @Bean
-    public AggregationVerticle aggregationVerticle(ObjectMapper objectMapper) {
-        return new AggregationVerticle(objectMapper);
+    public AggregationVerticle aggregationVerticle(
+            ObjectMapper objectMapper,
+            AggregateProperties aggregateProperties
+    ) {
+        return new AggregationVerticle(objectMapper, aggregateProperties);
     }
 
     @Bean
