@@ -19,7 +19,7 @@ public class BulkUpsertWorkerVerticle extends AbstractVerticle {
         vertx.eventBus().<FlushPayload>consumer(EventBusAddress.AGGREGATE_FLUSH.address(), message -> {
             FlushPayload payload = message.body();
             log.info("flush - buffer size: {}, body: {}", payload.buffer().size(), payload);
-            // TODO: DB Upsert
+            aggregateService.bulkUpsert(payload.buffer());
         });
 
         startPromise.complete();

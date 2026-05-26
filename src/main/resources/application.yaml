@@ -24,3 +24,7 @@ kafka:
 aggregate:
   flush-interval-seconds: 5
   flush-buffer-size: 1000
+
+logging:
+  level:
+    org.springframework.jdbc: DEBUG

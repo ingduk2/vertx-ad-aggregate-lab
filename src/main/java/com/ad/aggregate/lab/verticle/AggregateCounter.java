@@ -1,7 +1,9 @@
 package com.ad.aggregate.lab.verticle;
 
+import lombok.Getter;
 import lombok.ToString;
 
+@Getter
 @ToString
 public class AggregateCounter {
     private long request;
