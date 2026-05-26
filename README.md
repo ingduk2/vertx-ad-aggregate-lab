@@ -103,7 +103,8 @@ Spring REST (:8080)        ← 집계 결과 조회 API
 - 4-2. `BulkUpsertWorkerVerticle` 구현 — 배치 단위 MariaDB Upsert
 - 4-3. Upsert 전략 — `INSERT ... ON DUPLICATE KEY UPDATE` 설계
 - 4-4. EventBus Request-Reply로 flush 결과 수신 & 재시도 패턴
-- 4-5. 건별 Upsert vs Bulk Upsert 성능 비교
+- 4-5. AggregateCounter 리팩토링 — key 정보 포함, split 제거
+- 4-6. 건별 Upsert vs Bulk Upsert 성능 비교
 
 ---
 
