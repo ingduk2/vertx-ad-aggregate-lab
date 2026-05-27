@@ -68,7 +68,19 @@ public class AggregationVerticle extends AbstractVerticle {
         Map<String, AggregateCounter> snapshot = new HashMap<>(buffer);
         buffer.clear();
 
-        vertx.eventBus().send(EventBusAddress.AGGREGATE_FLUSH.address(), new FlushPayload(snapshot));
+        vertx.eventBus().request(EventBusAddress.AGGREGATE_FLUSH.address(), new FlushPayload(snapshot))
+                .onSuccess(reply -> log.info("flush response : {}", reply.body()))
+                .onFailure(error -> {
+                    log.error("flush fail : {}", error.getMessage());
+                    snapshot.forEach((key, counter) ->
+                            buffer.merge(key, counter, (existing, failed) -> {
+                                existing.addRequest(failed.getRequest());
+                                existing.addImpression(failed.getImpression());
+                                existing.addClick(failed.getClick());
+                                return existing;
+                            })
+                    );
+                });
     }
 
     private String buildKey(AdEventBase base) {
