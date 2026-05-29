@@ -6,4 +6,7 @@ public record AdEventBase(
         String hour,
         long count
 ) {
+    public String buildKey() {
+        return placementId + "_" + date + "_" + hour;
+    }
 }

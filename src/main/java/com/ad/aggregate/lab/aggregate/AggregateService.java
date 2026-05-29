@@ -29,18 +29,14 @@ public class AggregateService {
 
     @Transactional
     public void bulkUpsert(Map<String, AggregateCounter> buffer) {
-        List<Object[]> batchArgs = buffer.entrySet().stream()
-                .map(entry -> {
-                    String[] keys = entry.getKey().split("_");
-                    AggregateCounter counter = entry.getValue();
-                    return new Object[]{
-                            Long.parseLong(keys[0]),
-                            keys[1],
-                            keys[2],
-                            counter.getRequest(),
-                            counter.getImpression(),
-                            counter.getClick()
-                    };
+        List<Object[]> batchArgs = buffer.values().stream()
+                .map(counter -> new Object[]{
+                        counter.getPlacementId(),
+                        counter.getDate(),
+                        counter.getHour(),
+                        counter.getRequest(),
+                        counter.getImpression(),
+                        counter.getClick()
                 })
                 .toList();
 

@@ -48,10 +48,14 @@ public class AggregationVerticle extends AbstractVerticle {
     private <T extends AdEvent> void handle(String body, Class<T> clazz, ObjLongConsumer<AggregateCounter> action) {
         log.info("body: {}", body);
         T event = objectMapper.readValue(body, clazz);
-        String key = buildKey(event.base());
+        AdEventBase base = event.base();
+        String key = base.buildKey();
 
-        AggregateCounter aggregateCounter = buffer.computeIfAbsent(key, k -> new AggregateCounter());
-        long count = event.base().count();
+        AggregateCounter aggregateCounter = buffer.computeIfAbsent(
+                key,
+                k -> AggregateCounter.create(base.placementId(), base.date(), base.hour())
+        );
+        long count = base.count();
         action.accept(aggregateCounter, count);
         log.info("aggregate - key: {}, buffer: {}", key, buffer.get(key));
 
@@ -81,9 +85,5 @@ public class AggregationVerticle extends AbstractVerticle {
                             })
                     );
                 });
-    }
-
-    private String buildKey(AdEventBase base) {
-        return base.placementId() + "_" + base.date() + "_" + base.hour();
     }
 }
