@@ -1,8 +1,8 @@
 package com.ad.aggregate.lab.config;
 
 import com.ad.aggregate.lab.aggregate.AggregateService;
-import com.ad.aggregate.lab.common.FlushPayload;
-import com.ad.aggregate.lab.common.FlushPayloadCodec;
+import com.ad.aggregate.lab.verticle.model.FlushPayload;
+import com.ad.aggregate.lab.verticle.model.FlushPayloadCodec;
 import com.ad.aggregate.lab.verticle.AggregationVerticle;
 import com.ad.aggregate.lab.verticle.BulkUpsertWorkerVerticle;
 import com.ad.aggregate.lab.verticle.KafkaConsumerVerticle;

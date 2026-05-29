@@ -2,6 +2,9 @@ package com.ad.aggregate.lab.verticle;
 
 import com.ad.aggregate.lab.common.*;
 import com.ad.aggregate.lab.config.AggregateProperties;
+import com.ad.aggregate.lab.event.*;
+import com.ad.aggregate.lab.verticle.model.AggregateCounter;
+import com.ad.aggregate.lab.verticle.model.FlushPayload;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import lombok.RequiredArgsConstructor;

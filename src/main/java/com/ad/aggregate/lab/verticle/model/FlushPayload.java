@@ -1,6 +1,4 @@
-package com.ad.aggregate.lab.common;
-
-import com.ad.aggregate.lab.verticle.AggregateCounter;
+package com.ad.aggregate.lab.verticle.model;
 
 import java.util.Map;
 

@@ -2,7 +2,7 @@ package com.ad.aggregate.lab.verticle;
 
 import com.ad.aggregate.lab.aggregate.AggregateService;
 import com.ad.aggregate.lab.common.EventBusAddress;
-import com.ad.aggregate.lab.common.FlushPayload;
+import com.ad.aggregate.lab.verticle.model.FlushPayload;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.ad.aggregate.lab.common;
+package com.ad.aggregate.lab.verticle.model;
 
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.MessageCodec;

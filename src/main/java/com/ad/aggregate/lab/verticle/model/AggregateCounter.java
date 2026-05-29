@@ -1,4 +1,4 @@
-package com.ad.aggregate.lab.verticle;
+package com.ad.aggregate.lab.verticle.model;
 
 import lombok.Getter;
 import lombok.ToString;

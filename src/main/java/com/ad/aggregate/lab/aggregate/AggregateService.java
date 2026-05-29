@@ -1,6 +1,6 @@
 package com.ad.aggregate.lab.aggregate;
 
-import com.ad.aggregate.lab.verticle.AggregateCounter;
+import com.ad.aggregate.lab.verticle.model.AggregateCounter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
