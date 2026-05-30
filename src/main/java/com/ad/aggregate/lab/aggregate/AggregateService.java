@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -48,5 +49,13 @@ public class AggregateService {
                     impression_count = impression_count + VALUES(impression_count),
                     click_count = click_count + VALUES(click_count)
                 """, batchArgs);
+    }
+
+    public List<AdAggregate> findByDate(Long placementId, String date) {
+        return aggregateRepository.findByPlacementIdAndDate(placementId, date);
+    }
+
+    public Optional<AdAggregate> findByHour(Long placementId, String date, String hour) {
+        return aggregateRepository.findByPlacementIdAndDateAndHour(placementId, date, hour);
     }
 }

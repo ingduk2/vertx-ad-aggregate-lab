@@ -5,10 +5,13 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface AggregateRepository extends JpaRepository<AdAggregate, Long> {
     Optional<AdAggregate> findByPlacementIdAndDateAndHour(Long placementId, String date, String hour);
+
+    List<AdAggregate> findByPlacementIdAndDate(Long placementId, String date);
 
     @Modifying
     @Query(value = """
