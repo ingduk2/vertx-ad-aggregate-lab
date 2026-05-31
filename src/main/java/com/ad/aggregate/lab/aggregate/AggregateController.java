@@ -9,9 +9,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
-@RequestMapping("/api/aggreagte")
+@RequestMapping("/api/aggregate")
 @RequiredArgsConstructor
 public class AggregateController {
 
@@ -41,5 +42,10 @@ public class AggregateController {
                 .map(AdAggregateResponse::from)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/buffer/snapshot")
+    public CompletableFuture<List<AdAggregateResponse>> getBufferSnapshot() {
+        return aggregateService.getBufferSnapshot();
     }
 }

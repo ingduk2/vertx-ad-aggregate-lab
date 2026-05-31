@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.ObjectMapper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.ObjLongConsumer;
@@ -44,6 +45,13 @@ public class AggregationVerticle extends AbstractVerticle {
                 aggregateProperties.flushIntervalSeconds() * 1000L,
                 id -> flush(FlushReason.PERIODIC)
         );
+
+        vertx.eventBus().<String>consumer(
+                EventBusAddress.AGGREGATE_BUFFER_SNAPSHOT.address(),
+                message -> {
+                    String snapshot = objectMapper.writeValueAsString(new ArrayList<>(buffer.values()));
+                    message.reply(snapshot);
+        });
 
         startPromise.complete();
     }

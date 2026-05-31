@@ -1,5 +1,7 @@
 package com.ad.aggregate.lab.verticle.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -15,7 +17,12 @@ public class AggregateCounter {
     private long impression;
     private long click;
 
-    private AggregateCounter(Long placementId, String date, String hour) {
+    @JsonCreator
+    private AggregateCounter(
+            @JsonProperty("placementId") Long placementId,
+            @JsonProperty("date") String date,
+            @JsonProperty("hour") String hour
+    ) {
         this.placementId = Objects.requireNonNull(placementId);
         this.date = Objects.requireNonNull(date);
         this.hour = Objects.requireNonNull(hour);
