@@ -6,10 +6,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/aggregate")
@@ -19,33 +20,38 @@ public class AggregateController {
     private final AggregateService aggregateService;
 
     @GetMapping("/{placementId}/{date}")
-    public List<AdAggregateResponse> getByDate(
+    public Flux<AdAggregateResponse> getByDate(
             @PathVariable Long placementId,
             @PathVariable String date
     ) {
         List<AdAggregate> adAggregates = aggregateService.findByDate(placementId, date);
 
-        return adAggregates.stream()
+        List<AdAggregateResponse> responses = adAggregates.stream()
                 .map(AdAggregateResponse::from)
                 .toList();
+        
+        return Flux.fromIterable(responses);
     }
 
     @GetMapping("/{placementId}/{date}/{hour}")
-    public ResponseEntity<AdAggregateResponse> getByHour(
+    public Mono<ResponseEntity<AdAggregateResponse>> getByHour(
             @PathVariable Long placementId,
             @PathVariable String date,
             @PathVariable String hour
     ) {
         Optional<AdAggregate> adAggregate = aggregateService.findByHour(placementId, date, hour);
 
-        return adAggregate
+        AdAggregateResponse response = adAggregate
                 .map(AdAggregateResponse::from)
+                .orElse(null);
+
+        return Mono.justOrEmpty(response)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/buffer/snapshot")
-    public CompletableFuture<List<AdAggregateResponse>> getBufferSnapshot() {
+    public Mono<List<AdAggregateResponse>> getBufferSnapshot() {
         return aggregateService.getBufferSnapshot();
     }
 }

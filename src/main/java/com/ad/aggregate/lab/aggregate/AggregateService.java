@@ -7,13 +7,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -66,21 +66,20 @@ public class AggregateService {
         return aggregateRepository.findByPlacementIdAndDateAndHour(placementId, date, hour);
     }
 
-    public CompletableFuture<List<AdAggregateResponse>> getBufferSnapshot() {
-        CompletableFuture<List<AdAggregateResponse>> future = new CompletableFuture<>();
-
-        vertx.eventBus().<String>request(EventBusAddress.AGGREGATE_BUFFER_SNAPSHOT.address(), "")
-                .onSuccess(reply -> {
-                    List<AggregateCounter> counters = objectMapper.readValue(
-                            reply.body(),
-                            new TypeReference<List<AggregateCounter>>() {
-                            }
-                    );
-                    future.complete(counters.stream()
-                            .map(AdAggregateResponse::fromCounter)
-                            .toList());
-                }).onFailure(future::completeExceptionally);
-
-        return future;
+    public Mono<List<AdAggregateResponse>> getBufferSnapshot() {
+        return Mono.create(sink ->
+                vertx.eventBus().<String>request(EventBusAddress.AGGREGATE_BUFFER_SNAPSHOT.address(), "")
+                        .onSuccess(reply -> {
+                            List<AggregateCounter> counters = objectMapper.readValue(
+                                    reply.body(),
+                                    new TypeReference<List<AggregateCounter>>() {
+                                    }
+                            );
+                            sink.success(counters.stream()
+                                    .map(AdAggregateResponse::fromCounter)
+                                    .toList());
+                        })
+                        .onFailure(sink::error)
+        );
     }
 }
