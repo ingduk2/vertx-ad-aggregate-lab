@@ -17,14 +17,15 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AggregateController {
 
-    private final AggregateService aggregateService;
+    private final AggregateQueryService aggregateQueryService;
+    private final AggregateBufferService aggregateBufferService;
 
     @GetMapping("/{placementId}/{date}")
     public Flux<AdAggregateResponse> getByDate(
             @PathVariable Long placementId,
             @PathVariable String date
     ) {
-        List<AdAggregate> adAggregates = aggregateService.findByDate(placementId, date);
+        List<AdAggregate> adAggregates = aggregateQueryService.findByDate(placementId, date);
 
         List<AdAggregateResponse> responses = adAggregates.stream()
                 .map(AdAggregateResponse::from)
@@ -39,7 +40,7 @@ public class AggregateController {
             @PathVariable String date,
             @PathVariable String hour
     ) {
-        Optional<AdAggregate> adAggregate = aggregateService.findByHour(placementId, date, hour);
+        Optional<AdAggregate> adAggregate = aggregateQueryService.findByHour(placementId, date, hour);
 
         AdAggregateResponse response = adAggregate
                 .map(AdAggregateResponse::from)
@@ -52,6 +53,6 @@ public class AggregateController {
 
     @GetMapping("/buffer/snapshot")
     public Mono<List<AdAggregateResponse>> getBufferSnapshot() {
-        return aggregateService.getBufferSnapshot();
+        return aggregateBufferService.getBufferSnapshot();
     }
 }

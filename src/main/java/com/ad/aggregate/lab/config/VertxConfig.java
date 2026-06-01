@@ -1,6 +1,6 @@
 package com.ad.aggregate.lab.config;
 
-import com.ad.aggregate.lab.aggregate.AggregateService;
+import com.ad.aggregate.lab.aggregate.AggregateBulkService;
 import com.ad.aggregate.lab.verticle.model.FlushPayload;
 import com.ad.aggregate.lab.verticle.model.FlushPayloadCodec;
 import com.ad.aggregate.lab.verticle.AggregationVerticle;
@@ -42,8 +42,8 @@ public class VertxConfig {
     }
 
     @Bean
-    public BulkUpsertWorkerVerticle bulkUpsertWorkerVerticle(AggregateService aggregateService) {
-        return new BulkUpsertWorkerVerticle(aggregateService);
+    public BulkUpsertWorkerVerticle bulkUpsertWorkerVerticle(AggregateBulkService aggregateBulkService) {
+        return new BulkUpsertWorkerVerticle(aggregateBulkService);
     }
 
     @Bean

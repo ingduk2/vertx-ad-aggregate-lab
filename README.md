@@ -114,6 +114,7 @@ Spring REST (:8080)        ← 집계 결과 조회 API
 - 5-1. 집계 결과 조회 API — `placementId + hour` 기준 조회
 - 5-2. 실시간 인메모리 스냅샷 조회 — Verticle 현재 버퍼 상태 엔드포인트
 - 5-3. WebFlux로 EventBus 응답 대기 — `Mono`로 Verticle 상태 조회
+- 5-4. AggregateService 분리 리팩토링 — DB 조회 / Bulk Upsert / 버퍼 스냅샷
 
 ---
 

@@ -1,6 +1,6 @@
 package com.ad.aggregate.lab.verticle;
 
-import com.ad.aggregate.lab.aggregate.AggregateService;
+import com.ad.aggregate.lab.aggregate.AggregateBulkService;
 import com.ad.aggregate.lab.common.EventBusAddress;
 import com.ad.aggregate.lab.verticle.model.FlushPayload;
 import io.vertx.core.AbstractVerticle;
@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class BulkUpsertWorkerVerticle extends AbstractVerticle {
 
-    private final AggregateService aggregateService;
+    private final AggregateBulkService aggregateBulkService;
 
     @Override
     public void start(Promise<Void> startPromise) throws Exception {
@@ -20,7 +20,7 @@ public class BulkUpsertWorkerVerticle extends AbstractVerticle {
             FlushPayload payload = message.body();
             log.info("flush - buffer size: {}, body: {}", payload.buffer().size(), payload);
             try {
-                aggregateService.bulkUpsert(payload.buffer());
+                aggregateBulkService.bulkUpsert(payload.buffer());
                 message.reply("success");
             } catch (Exception e) {
                 log.error("flush fail", e);
